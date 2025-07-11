@@ -10,4 +10,3 @@ df.columns = ['ID', 'Precio', 'Area','Habitaciones','Antigüedad','fecha_publica
 
 total_viviendas = len(df)
 promedio_precio_m2 = df.groupby('habitaciones')['precio_m2'].mean().reset_index()
-#promedio_por_tipo 

@@ -1,0 +1,28 @@
+# Entorno virtual
+.venv/
+
+# Configuración privada
+.env
+
+# Archivos de Python compilados
+__pycache__/
+*.pyc
+*.pyo
+
+# Archivos de logs o debug
+*.log
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# Configuración de editor (VS Code, PyCharm, etc.)
+.vscode/
+.idea/
+
+# Archivos temporales
+*.bak
+*.swp
+
+# Archivos CSV/Dataset si no quieres subirlos
+data/*.csv
