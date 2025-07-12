@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listado Completo de Viviendas</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Listado Completo de Viviendas</h1>
+            <nav>
+                <ul>
+                    <li><a href="{{ url_for('vivienda.index') }}">Inicio</a></li>
+                    <li><a href="{{ url_for('vivienda.listar_viviendas') }}" class="active">Listado</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <div class="toolbar">
+            <a href="{{ url_for('vivienda.index') }}" class="btn btn-back">
+                ← Volver al inicio
+            </a>
+            <a href="#" class="btn btn-add">
+                ＋ Añadir nueva vivienda
+            </a>
+        </div>
+
+        <div class="data-container">
+            {% if viviendas %}
+            <div class="summary-info">
+                Mostrando <strong>{{ viviendas|length }}</strong> viviendas registradas
+            </div>
+
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Precio</th>
+                        <th>Área (m²)</th>
+                        <th>Habitaciones</th>
+                        <th>Antigüedad</th>
+                        <th>Ubicación</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for vivienda in viviendas %}
+                    <tr>
+                        <td>$ {{ "{:,.0f}".format(vivienda.precio) }}</td>
+                        <td>{{ vivienda.area }} m²</td>
+                        <td>{{ vivienda.habitaciones }}</td>
+                        <td>{{ 2025 - vivienda.antiguedad }} años</td>
+                        <td>{{ vivienda.ubicacion or 'N/A' }}</td>
+                        <td class="actions">
+                            <a href="#" class="btn btn-edit">Editar</a>
+                            <a href="#" class="btn btn-delete">Eliminar</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <div class="pagination">
+                <button class="btn-pagination" disabled>Anterior</button>
+                <span class="page-info">Página 1 de 1</span>
+                <button class="btn-pagination" disabled>Siguiente</button>
+            </div>
+            {% else %}
+            <div class="no-results">
+                <div class="empty-state-icon"></div>
+                <h3>No hay viviendas registradas</h3>
+                <p>Actualmente no existen propiedades en la base de datos.</p>
+                <a href="#" class="btn btn-add">Añadir primera vivienda</a>
+            </div>
+            {% endif %}
+        </div>
+
+        <footer>
+            <p>Sistema Inmobiliario &copy; {{ current_year }}</p>
+            <p class="debug-info">Tiempo de carga: {{ load_time }} segundos</p>
+        </footer>
+    </div>
+</body>
+</html>
