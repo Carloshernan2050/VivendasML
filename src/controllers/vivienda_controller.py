@@ -8,29 +8,47 @@ modelo = ViviendaModel()
 @vivienda_blueprint.route('/')
 def index():
     try:
-        # Get basic statistics for the dashboard
-        datos = modelo.obtener_datos(limite=1000)  # Limit to 1000 records for performance
-        
-        # Calculate statistics
+        datos = modelo.obtener_datos(limite=1000)
+
         total_viviendas = len(datos)
-        precios = [v['precio'] for v in datos if 'precio' in v and isinstance(v['precio'], (int, float))]
-        precio_promedio = sum(precios)/len(precios) if precios else 0
-        
+
+        # Calcular promedio por metro cuadrado
+        precios_m2 = [
+            v['precio'] / v['area']
+            for v in datos
+            if 'precio' in v and 'area' in v and isinstance(v['precio'], (int, float)) and isinstance(v['area'], (int, float)) and v['area'] > 0
+        ]
+        promedio_m2 = sum(precios_m2) / len(precios_m2) if precios_m2 else 0
+
+        # Clasificación por tipo de vivienda
+        contador_tipos = {"Casa": 0, "Apartamento": 0, "Otros": 0}
+        for v in datos:
+            desc = v.get("descripcion", "").lower()
+            if "casa" in desc:
+                contador_tipos["Casa"] += 1
+            elif "apartamento" in desc:
+                contador_tipos["Apartamento"] += 1
+            else:
+                contador_tipos["Otros"] += 1
+
         return render_template(
             'index.html',
             total_viviendas=total_viviendas,
-            precio_promedio=precio_promedio,
-            current_year=datetime.now().year
+            precio_promedio=promedio_m2,  # <-- este es el nuevo promedio por m2
+            current_year=datetime.now().year,
+            contador_tipos=contador_tipos
         )
     except Exception as e:
         print(f"Error in index route: {e}")
-        # Fallback with default values if there's an error
         return render_template(
             'index.html',
             total_viviendas=0,
             precio_promedio=0,
-            current_year=datetime.now().year
+            current_year=datetime.now().year,
+            contador_tipos={"Casa": 0, "Apartamento": 0, "Otros": 0}
         )
+
+
 
 @vivienda_blueprint.route('/predecir', methods=['POST'])
 def predecir():
