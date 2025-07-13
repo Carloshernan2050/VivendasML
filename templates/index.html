@@ -47,9 +47,6 @@
                     <a href="{{ url_for('vivienda.listar_viviendas') }}" class="btn btn-primary btn-lg">
                         <i class="bi bi-house-door"></i> Ver todas las viviendas
                     </a>
-                    <button class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#predictionModal">
-                        <i class="bi bi-calculator"></i> Calcular precio
-                    </button>
                 </div>
             </section>
 
@@ -110,35 +107,6 @@
 
                 </div>
             </section>
-
-            <!-- Formulario de Predicción (Modal) -->
-            <div class="modal fade" id="predictionModal" tabindex="-1">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Calcular Precio Estimado</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                        </div>
-                        <form method="POST" action="{{ url_for('vivienda.predecir') }}">
-                            <div class="modal-body">
-                                <div class="mb-3">
-                                    <label for="area" class="form-label">Área (m²)</label>
-                                    <input type="number" class="form-control" id="area" name="area" required step="0.01" min="1">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="antiguedad" class="form-label">Año de Construcción</label>
-                                    <input type="number" class="form-control" id="antiguedad" name="antiguedad" required min="1800" max="{{ current_year }}">
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                <button type="submit" class="btn btn-primary">Calcular</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </main>
 
         <!-- Footer -->
         <footer class="bg-dark text-white p-3 mt-5 rounded">
