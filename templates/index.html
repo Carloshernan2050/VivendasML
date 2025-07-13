@@ -4,124 +4,111 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inicio - Sistema Inmobiliario</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
 </head>
 <body>
-    <div class="container-fluid">
-        <!-- Mensajes Flash -->
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                <div class="row mt-3">
-                    <div class="col-md-8 mx-auto">
-                        {% for category, message in messages %}
-                            <div class="alert alert-{{ category }} alert-dismissible fade show">
-                                {{ message }}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                            </div>
-                        {% endfor %}
-                    </div>
+<div class="container-fluid">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="row mt-3">
+                <div class="col-md-8 mx-auto">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
                 </div>
-            {% endif %}
-        {% endwith %}
-
-        <!-- Header -->
-        <header class="bg-primary text-white p-4 mb-4 rounded">
-            <div class="container">
-                <h1 class="display-4">Sistema de Gestión Inmobiliaria</h1>
-                <nav class="nav nav-pills">
-                    <a class="nav-link active" href="{{ url_for('vivienda.index') }}">Inicio</a>
-                    <a class="nav-link text-white" href="{{ url_for('vivienda.listar_viviendas') }}">Listado Completo</a>
-                </nav>
             </div>
-        </header>
+        {% endif %}
+    {% endwith %}
 
-        <!-- Main Content -->
-        <main class="container">
-            <!-- Sección de Bienvenida -->
-            <section class="jumbotron bg-light p-5 rounded mb-4">
-                <h2 class="display-5">Bienvenido al sistema</h2>
-                <p class="lead">Gestión integral de propiedades inmobiliarias</p>
-                <hr class="my-4">
-                <div class="d-flex gap-3">
-                    <a href="{{ url_for('vivienda.listar_viviendas') }}" class="btn btn-primary btn-lg">
-                        <i class="bi bi-house-door"></i> Ver todas las viviendas
-                    </a>
-                    <a class="nav-link text-white" href="{{ url_for('vivienda.grafico_dispersion') }}">
-                        Gráfico Dispersión
-                    </a>
-                </div>
-            </section>
+    <header class="bg-gradient-red-black text-white p-4 mb-4 rounded-bottom">
+        <div class="container">
+            <h1 class="display-4">Sistema de Gestión Inmobiliaria</h1>
+            <nav class="nav nav-pills">
+                <a class="nav-link {% if request.endpoint == 'vivienda.index' %}active{% endif %}" href="{{ url_for('vivienda.index') }}">Inicio</a>
+                <a class="nav-link {% if request.endpoint == 'vivienda.listar_viviendas' %}active{% endif %}" href="{{ url_for('vivienda.listar_viviendas') }}">Listado Completo</a>
+            </nav>
+        </div>
+    </header>
 
-            <!-- Estadísticas Rápidas -->
-            <section class="mb-5">
-                <h3 class="mb-3"><i class="bi bi-graph-up"></i> Resumen Estadístico</h3>
-                <div class="row">
-                    <div class="col-md-4 mb-3">
-                        <div class="card h-100">
-                            <div class="card-body text-center">
-                                <h5 class="card-title">Total Propiedades</h5>
-                                <p class="display-4 text-primary">{{ total_viviendas }}</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <div class="card h-100">
-                            <div class="card-body text-center">
-                                <h5 class="card-title">Precio Promedio</h5>
-                                <p class="display-4 text-success">$ {{ "%0.2f"|format(precio_promedio) }}</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <div class="card h-100">
-                            <div class="card-body text-center">
-                                <h5 class="card-title">Año Actual</h5>
-                                <p class="display-4 text-info">{{ current_year }}</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <div class="card h-100">
-                                <div class="card-body text-center">
-                                    <h5 class="card-title">Casas</h5>
-                                    <p class="display-5 text-info">{{ contador_tipos['Casa'] }}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="card h-100">
-                                <div class="card-body text-center">
-                                    <h5 class="card-title">Apartamentos</h5>
-                                    <p class="display-5 text-info">{{ contador_tipos['Apartamento'] }}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="card h-100">
-                                <div class="card-body text-center">
-                                    <h5 class="card-title">Otros</h5>
-                                    <p class="display-5 text-info">{{ contador_tipos['Otros'] }}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </section>
-
-        <!-- Footer -->
-        <footer class="bg-dark text-white p-3 mt-5 rounded">
-            <div class="container text-center">
-                <p class="mb-0">Sistema Inmobiliario &copy; {{ current_year }} - Todos los derechos reservados</p>
+    <main class="container">
+        <section class="jumbotron bg-light p-5 rounded mb-4">
+            <h2 class="display-5 text-danger fw-bold">Bienvenido al sistema</h2>
+            <p class="lead">Gestión integral de propiedades inmobiliarias</p>
+            <hr class="my-4">
+            <div class="d-flex gap-3">
+                <a href="{{ url_for('vivienda.listar_viviendas') }}" class="btn btn-negro btn-lg">
+                    <i class="bi bi-house-door"></i> Ver todas las viviendas
+                </a>
+                <a href="{{ url_for('vivienda.grafico_dispersion') }}" class="btn btn-negro btn-lg">
+                    Gráfico Dispersión
+                </a>
             </div>
-        </footer>
-    </div>
+        </section>
 
-    <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <section class="mb-5">
+            <h3 class="mb-3"><i class="bi bi-graph-up"></i> Resumen Estadístico</h3>
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <h5>Total Propiedades</h5>
+                            <p class="display-4">{{ total_viviendas }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <h5>Precio Promedio</h5>
+                            <p class="display-4 text-success">$ {{ "%0.2f"|format(precio_promedio) }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <h5>Año Actual</h5>
+                            <p class="display-4">{{ current_year }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <h5>Casas</h5>
+                            <p class="display-5 text-info">{{ contador_tipos['Casa'] }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <h5>Apartamentos</h5>
+                            <p class="display-5 text-info">{{ contador_tipos['Apartamento'] }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <h5>Otros</h5>
+                            <p class="display-5 text-info">{{ contador_tipos['Otros'] }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

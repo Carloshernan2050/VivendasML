@@ -4,22 +4,25 @@
     <meta charset="UTF-8">
     <title>Diagrama de Dispersión - Precio vs m²</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <div class="container my-5">
-        <h2 class="mb-4">Diagrama de Dispersión: Precio Total vs Valor por m²</h2>
+        <div class="titulo-grafico mb-4">
+            <h2>Diagrama de Dispersión: Precio Total vs Valor por m²</h2>
+        </div>
+
         <canvas id="scatterChart" width="800" height="400"></canvas>
 
-        <a href="{{ url_for('vivienda.index') }}" class="btn btn-primary mt-4">← Volver al inicio</a>
+        <a href="{{ url_for('vivienda.index') }}" class="btn btn-negro mt-4">← Volver al inicio</a>
     </div>
 
     <script>
         const puntos = {{ puntos | tojson }};
         const colores = {
-            "Casa": "rgba(54, 162, 235, 0.7)",
-            "Apartamento": "rgba(255, 99, 132, 0.7)",
-            "Otros": "rgba(255, 206, 86, 0.7)"
+            "Casa": "rgba(0, 0, 0, 0.8)",              
+            "Apartamento": "rgba(255, 0, 0, 0.7)",     
+            "Otros": "rgba(0, 123, 255, 0.8)"        
         };
 
         const datasets = ["Casa", "Apartamento", "Otros"].map(tipo => ({
@@ -34,14 +37,8 @@
             options: {
                 responsive: true,
                 scales: {
-                    x: {
-                        title: { display: true, text: 'Precio total ($)' },
-                        type: 'linear'
-                    },
-                    y: {
-                        title: { display: true, text: 'Precio por m² ($/m²)' },
-                        type: 'linear'
-                    }
+                    x: { title: { display: true, text: 'Precio total ($)' } },
+                    y: { title: { display: true, text: 'Precio por m² ($/m²)' } }
                 },
                 plugins: {
                     title: {
@@ -51,6 +48,16 @@
                     tooltip: {
                         callbacks: {
                             label: (ctx) => `Precio: $${ctx.parsed.x.toLocaleString()}, $/m²: $${ctx.parsed.y}`
+                        }
+                    },
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            color: '#000',
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            }
                         }
                     }
                 }
