@@ -123,3 +123,36 @@ def listar_viviendas():
         print(f"Error en listar_viviendas: {e}")
         flash(f'Error al cargar el listado: {str(e)}', 'error')
         return render_template('error.html', mensaje=str(e))
+    
+@vivienda_blueprint.route('/grafico_dispersion')
+def grafico_dispersion():
+    try:
+        datos = modelo.obtener_datos()
+
+        puntos = []
+
+        for v in datos:
+            precio = v.get("precio")
+            area = v.get("area")
+            desc = v.get("descripcion", "").lower()
+
+            if not isinstance(precio, (int, float)) or not isinstance(area, (int, float)) or area <= 0:
+                continue
+
+            tipo = "Otros"
+            if "casa" in desc:
+                tipo = "Casa"
+            elif "apartamento" in desc:
+                tipo = "Apartamento"
+
+            puntos.append({
+                "precio": precio,
+                "m2": round(precio / area, 2),
+                "tipo": tipo
+            })
+
+        return render_template("scatter.html", puntos=puntos)
+    except Exception as e:
+        print(f"Error en /grafico_dispersion: {e}")
+        flash("Error al generar el gráfico de dispersión", "danger")
+        return render_template("error.html", mensaje=str(e))

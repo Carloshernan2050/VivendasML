@@ -47,6 +47,13 @@
                     <a href="{{ url_for('vivienda.listar_viviendas') }}" class="btn btn-primary btn-lg">
                         <i class="bi bi-house-door"></i> Ver todas las viviendas
                     </a>
+                    <a class="nav-link text-white" href="{{ url_for('vivienda.grafico_dispersion') }}">
+                        Gráfico Dispersión
+                    </a>
+                    <button class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#predictionModal">
+                        <i class="bi bi-calculator"></i> Calcular precio
+                    </button>
+
                 </div>
             </section>
 

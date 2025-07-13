@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Diagrama de Dispersión - Precio vs m²</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container my-5">
+        <h2 class="mb-4">Diagrama de Dispersión: Precio Total vs Valor por m²</h2>
+        <canvas id="scatterChart" width="800" height="400"></canvas>
+
+        <a href="{{ url_for('vivienda.index') }}" class="btn btn-primary mt-4">← Volver al inicio</a>
+    </div>
+
+    <script>
+        const puntos = {{ puntos | tojson }};
+        const colores = {
+            "Casa": "rgba(54, 162, 235, 0.7)",
+            "Apartamento": "rgba(255, 99, 132, 0.7)",
+            "Otros": "rgba(255, 206, 86, 0.7)"
+        };
+
+        const datasets = ["Casa", "Apartamento", "Otros"].map(tipo => ({
+            label: tipo,
+            data: puntos.filter(p => p.tipo === tipo).map(p => ({ x: p.precio, y: p.m2 })),
+            backgroundColor: colores[tipo]
+        }));
+
+        new Chart(document.getElementById('scatterChart'), {
+            type: 'scatter',
+            data: { datasets },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        title: { display: true, text: 'Precio total ($)' },
+                        type: 'linear'
+                    },
+                    y: {
+                        title: { display: true, text: 'Precio por m² ($/m²)' },
+                        type: 'linear'
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Relación entre Precio y Precio por m² por tipo de vivienda'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: (ctx) => `Precio: $${ctx.parsed.x.toLocaleString()}, $/m²: $${ctx.parsed.y}`
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
