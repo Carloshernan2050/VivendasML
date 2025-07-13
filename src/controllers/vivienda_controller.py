@@ -61,29 +61,46 @@ def predecir():
         flash(f'Error en la predicción: {str(e)}', 'error')
         return render_template('index.html')
 
+from dateutil import parser  # solo necesitas instalar python-dateutil si no lo tienes
+
 @vivienda_blueprint.route('/listado')
 def listar_viviendas():
     try:
-        print("\n=== INICIO DE LISTAR VIVIENDAS ===")
         datos = modelo.obtener_datos()
-        
-        # Transform data for display
         viviendas = []
-        current_year = datetime.now().year
         for doc in datos:
-            # Ensure all required fields exist
             doc.setdefault('precio', 0)
             doc.setdefault('area', 0)
             doc.setdefault('habitaciones', 0)
-            doc.setdefault('antiguedad', current_year)
             doc.setdefault('descripcion', 'Sin descripción')
-            
-            # Calculate property age
-            doc['antiguedad_anos'] = current_year - doc['antiguedad']
+
+            # 🏗️ Fecha de construcción = fecha_publicacion (como string)
+            fecha_pub = doc.get('fecha_publicacion')
+            if isinstance(fecha_pub, str):
+                try:
+                    fecha_dt = parser.parse(fecha_pub)
+                    doc['fecha_construccion'] = fecha_dt.strftime('%Y-%m-%d')
+                    doc['antiguedad_anos'] = (datetime.now() - fecha_dt).days // 365
+                except Exception as e:
+                    print(f"⚠️ Fecha inválida: {fecha_pub} ({e})")
+                    doc['fecha_construccion'] = 'Desconocida'
+                    doc['antiguedad_anos'] = 'Desconocida'
+            else:
+                doc['fecha_construccion'] = 'Desconocida'
+                doc['antiguedad_anos'] = 'Desconocida'
+
+            # 🏠 Clasificar tipo de vivienda
+            desc = doc['descripcion'].lower()
+            if 'casa' in desc:
+                doc['tipo_vivienda'] = 'Casa'
+            elif 'apartamento' in desc:
+                doc['tipo_vivienda'] = 'Apartamento'
+            else:
+                doc['tipo_vivienda'] = 'Otros'
+
             viviendas.append(doc)
-        
-        print(f"Datos recibidos del modelo: {len(viviendas)} registros")
-        return render_template('mostrar_datos.html', viviendas=viviendas)
+
+        return render_template('mostrar_datos.html', viviendas=viviendas, current_year=datetime.now().year)
     except Exception as e:
         print(f"Error en listar_viviendas: {e}")
         flash(f'Error al cargar el listado: {str(e)}', 'error')

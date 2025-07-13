@@ -4,82 +4,83 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Listado Completo de Viviendas</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+
+    <!-- Bootstrap + Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+
+    <!-- Estilos personalizados -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Listado Completo de Viviendas</h1>
-            <nav>
-                <ul>
-                    <li><a href="{{ url_for('vivienda.index') }}">Inicio</a></li>
-                    <li><a href="{{ url_for('vivienda.listar_viviendas') }}" class="active">Listado</a></li>
-                </ul>
-            </nav>
+    <div class="container-fluid">
+        <!-- Header -->
+        <header class="bg-primary text-white p-4 mb-4 rounded">
+            <div class="container">
+                <h1 class="display-5">Listado Completo de Viviendas</h1>
+                <nav class="nav nav-pills">
+                    <a class="nav-link text-white" href="{{ url_for('vivienda.index') }}">Inicio</a>
+                    <a class="nav-link active" href="{{ url_for('vivienda.listar_viviendas') }}">Listado</a>
+                </nav>
+            </div>
         </header>
 
-        <div class="toolbar">
-            <a href="{{ url_for('vivienda.index') }}" class="btn btn-back">
-                ← Volver al inicio
-            </a>
-            <a href="#" class="btn btn-add">
-                ＋ Añadir nueva vivienda
-            </a>
-        </div>
-
-        <div class="data-container">
+        <!-- Contenido principal -->
+        <main class="container mb-5">
             {% if viviendas %}
-            <div class="summary-info">
-                Mostrando <strong>{{ viviendas|length }}</strong> viviendas registradas
+            <div class="mb-3">
+                <h5>Mostrando <strong>{{ viviendas|length }}</strong> viviendas registradas</h5>
             </div>
 
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>Precio</th>
-                        <th>Área (m²)</th>
-                        <th>Habitaciones</th>
-                        <th>Antigüedad</th>
-                        <th>Ubicación</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for vivienda in viviendas %}
-                    <tr>
-                        <td>$ {{ "{:,.0f}".format(vivienda.precio) }}</td>
-                        <td>{{ vivienda.area }} m²</td>
-                        <td>{{ vivienda.habitaciones }}</td>
-                        <td>{{ 2025 - vivienda.antiguedad }} años</td>
-                        <td>{{ vivienda.ubicacion or 'N/A' }}</td>
-                        <td class="actions">
-                            <a href="#" class="btn btn-edit">Editar</a>
-                            <a href="#" class="btn btn-delete">Eliminar</a>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-
-            <div class="pagination">
-                <button class="btn-pagination" disabled>Anterior</button>
-                <span class="page-info">Página 1 de 1</span>
-                <button class="btn-pagination" disabled>Siguiente</button>
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered align-middle">
+                    <thead class="table-dark text-center">
+                        <tr>
+                            <th>Precio</th>
+                            <th>Área (m²)</th>
+                            <th>Habitaciones</th>
+                            <th>Tipo</th>
+                            <th>Construcción</th>
+                            <th>Antigüedad</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for vivienda in viviendas %}
+                        <tr>
+                            <td>$ {{ "{:,.0f}".format(vivienda.precio) }}</td>
+                            <td>{{ vivienda.area }} m²</td>
+                            <td>{{ vivienda.habitaciones }}</td>
+                            <td>{{ vivienda.tipo_vivienda }}</td>
+                            <td>{{ vivienda.fecha_construccion }}</td>
+                            <td>
+                                {% if vivienda.antiguedad_anos is string %}
+                                    {{ vivienda.antiguedad_anos }}
+                                {% else %}
+                                    {{ vivienda.antiguedad_anos }} años
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
             {% else %}
-            <div class="no-results">
-                <div class="empty-state-icon"></div>
-                <h3>No hay viviendas registradas</h3>
+            <div class="alert alert-info text-center">
+                <h4 class="alert-heading">No hay viviendas registradas</h4>
                 <p>Actualmente no existen propiedades en la base de datos.</p>
-                <a href="#" class="btn btn-add">Añadir primera vivienda</a>
+                <a href="#" class="btn btn-primary">Añadir primera vivienda</a>
             </div>
             {% endif %}
-        </div>
+        </main>
 
-        <footer>
-            <p>Sistema Inmobiliario &copy; {{ current_year }}</p>
-            <p class="debug-info">Tiempo de carga: {{ load_time }} segundos</p>
+        <!-- Footer -->
+        <footer class="bg-dark text-white p-3 mt-5 rounded text-center">
+            <p class="mb-0">Sistema Inmobiliario &copy; {{ current_year }}</p>
         </footer>
     </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
