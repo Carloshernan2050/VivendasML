@@ -2,36 +2,47 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Diagrama de Dispersión - Precio vs m²</title>
+    <title>Regresión Lineal - Precio vs m²</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <div class="container my-5">
         <div class="titulo-grafico mb-4">
-            <h2>Diagrama de Dispersión: Precio Total vs Valor por m²</h2>
+            <h2>Gráfico con Línea de Regresión: Precio vs Precio/m²</h2>
+            <p class="lead text-white mt-3">🔢 Total de viviendas analizadas: <strong>{{ total_viviendas }}</strong></p>
         </div>
 
-        <canvas id="scatterChart" width="800" height="400"></canvas>
+        <canvas id="regresionChart" width="800" height="400"></canvas>
 
         <a href="{{ url_for('vivienda.index') }}" class="btn btn-negro mt-4">← Volver al inicio</a>
     </div>
 
     <script>
         const puntos = {{ puntos | tojson }};
-        const colores = {
-            "Casa": "rgba(0, 0, 0, 0.8)",
-            "Apartamento": "rgba(255, 0, 0, 0.7)",
-            "Otros": "rgba(0, 123, 255, 0.8)"
-        };
+        const linea = [
+            { x: {{ min_x }}, y: {{ min_y }} },
+            { x: {{ max_x }}, y: {{ max_y }} }
+        ];
 
-        const datasets = ["Casa", "Apartamento", "Otros"].map(tipo => ({
-            label: tipo,
-            data: puntos.filter(p => p.tipo === tipo).map(p => ({ x: p.precio, y: p.m2 })),
-            backgroundColor: colores[tipo]
-        }));
+        const datasets = [
+            {
+                label: "Viviendas",
+                data: puntos.map(p => ({ x: p.precio, y: p.m2 })),
+                backgroundColor: "rgba(0, 123, 255, 0.7)"
+            },
+            {
+                label: "Regresión Lineal",
+                data: linea,
+                borderColor: "rgba(0, 0, 0, 0.9)",
+                borderWidth: 2,
+                type: "line",
+                fill: false,
+                pointRadius: 0
+            }
+        ];
 
-        new Chart(document.getElementById('scatterChart'), {
+        new Chart(document.getElementById('regresionChart'), {
             type: 'scatter',
             data: { datasets },
             options: {
@@ -43,11 +54,13 @@
                 plugins: {
                     title: {
                         display: true,
-                        text: 'Relación entre Precio y Precio por m² por tipo de vivienda'
+                        text: 'Regresión Lineal: Precio vs Precio por m²'
                     },
                     tooltip: {
                         callbacks: {
-                            label: ctx => `Precio: $${ctx.parsed.x.toLocaleString()}, $/m²: $${ctx.parsed.y}`
+                            label: ctx => ctx.dataset.label === "Regresión Lineal"
+                                ? null
+                                : `Precio: $${ctx.parsed.x.toLocaleString()}, $/m²: $${ctx.parsed.y}`
                         }
                     },
                     legend: {

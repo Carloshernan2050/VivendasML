@@ -17,14 +17,17 @@ def create_app():
 
     # Registrar blueprints
     from src.controllers.vivienda_controller import vivienda_blueprint
+    from src.controllers.analisis_controller import analisis_blueprint  # ⬅️ AÑADIR ESTO
+
     app.register_blueprint(vivienda_blueprint)
+    app.register_blueprint(analisis_blueprint)  # ⬅️ AÑADIR ESTO
 
     # Conexión a MongoDB (nuevo enfoque para Flask 2.3+)
     @app.before_request
     def init_db():
         from core.database import MongoDBConnection
         if not hasattr(app, 'mongo_initialized'):
-            MongoDBConnection()  # Establece conexión
+            MongoDBConnection()
             app.mongo_initialized = True
 
     return app
